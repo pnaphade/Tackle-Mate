@@ -1,9 +1,11 @@
 # Adapted from https://google.github.io/mediapipe/solutions/pose.html
 
+from turtle import left
 import cv2
 import mediapipe as mp
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -17,8 +19,8 @@ cap = cv2.VideoCapture(input_vid)
 frame_counter = 0
 landmarks_timeseries = []
 
-with mp_pose.Pose(min_detection_confidence=0.1,
-        min_tracking_confidence=0.1) as pose: # how to tune these parameters?
+with mp_pose.Pose(min_detection_confidence=0.5,
+        min_tracking_confidence=0.5) as pose: # how to tune these parameters?
 
     while cap.isOpened():
         success, image = cap.read()
@@ -70,5 +72,56 @@ for body, index in body_index.items():
     print(body)
     print(landmarks_50[index])
     print()
+
+# Make landmarks_timeseries body_areas x time
+landmarks_timeseries = np.array(landmarks_timeseries).transpose()
+
+print(landmarks_timeseries.shape)
+
+left_should = landmarks_timeseries[body_index["left shoulder"]]
+
+left_should_x = np.zeros_like(left_should)
+left_should_y = np.zeros_like(left_should)
+left_should_z = np.zeros_like(left_should)
+
+# Unpacking x, y, z coords from each NormalizedLandmark object
+for i in range(len(left_should)):
+    left_should_x[i] = left_should[i].x
+    left_should_y[i] = left_should[i].y
+    left_should_z[i] = left_should[i].z
+
+
+fig1, ax1 = plt.subplots()
+ax1.plot(left_should_x)
+ax1.set_xlabel("Frames")
+ax1.set_ylabel("Normalized X position")
+
+fig2, ax2 = plt.subplots()
+ax2.plot(left_should_y)
+ax2.set_xlabel("Frames")
+ax2.set_ylabel("Normalized Y position")
+
+fig3, ax3 = plt.subplots()
+ax3.plot(left_should_z)
+ax3.set_xlabel("Frames")
+ax3.set_ylabel("Normalized Z position")
+
+plt.show()
+'''
+plt.plot(left_should_x)
+plt.show()
+
+plt.plot(left_should_y)
+plt.show()
+
+plt.plot(left_should_z)
+plt.show()
+'''
+
+'''
+fig, ax = plt.subplots()
+ax.plot(left_should_x)
+fig.show()
+'''
 
 cap.release()
