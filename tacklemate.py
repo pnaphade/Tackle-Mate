@@ -5,7 +5,7 @@ import urllib.parse as up
 
 # database_url = "postgres://
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, template_folder='static/templates')
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
