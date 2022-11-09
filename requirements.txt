@@ -1,3 +1,9 @@
 Flask
 gunicorn
 psycopg2
+numpy
+tensorflow
+tensorflow-hub
+cv2
+matplotlib
+
