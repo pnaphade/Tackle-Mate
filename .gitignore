@@ -1,3 +1,4 @@
 *.DS_store
 *.mov
 *.mp4
+*__pycache__*
