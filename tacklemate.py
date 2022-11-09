@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import flask
-import psycopg2
 import urllib.parse as up
 
 # database_url = "postgres://
