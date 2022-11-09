@@ -5,10 +5,17 @@
 </head>
 <body>
    {% include 'header.html' %}
-   <br>
-   <a href="searchform" > Click here to upload a tackle video </a>
-   <br>
-   <br>
+   <div style="padding-left: 0.5rem;">
+        <br>
+        <form action=>
+            <label for="img"><h3>Upload a tackle video</h3></label>
+            <br>
+            <input type="file" id="vid" name="vid" accept="video/*">
+            <br><br>
+            <input type="Submit" value="Analyze my tackle">
+        </form>
+        <br>
+    </div>
    {% include 'footer.html' %}
 
 </body>
