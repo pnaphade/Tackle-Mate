@@ -4,6 +4,6 @@ psycopg2
 numpy
 tensorflow
 tensorflow-hub
-cv2
+opencv-python
 matplotlib
 
