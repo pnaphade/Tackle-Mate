@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 #-----------------------------------------------------------------------
-# auth.py
-# Author: Priya Naphade
 # Adapted from Bob Dondero
 #   With lots of help from https://realpython.com/flask-google-login/
 #-----------------------------------------------------------------------
