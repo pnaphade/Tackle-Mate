@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html>
+
 <head>
    <title>TackleMate</title>
    <link rel="icon" href="/static/rugby-ball.png">
 </head>
+
 <body>
-   {% include 'header.html' %}
-   <div style="padding-left: 0.5rem;">
+
+    {% include 'header.html' %}
+
+   <div style="padding-left: 1rem;">
         <br>
+        <h3>Welcome, {{username}}!</h3>
+        <br>
+
         <form action=>
-            <label for="img"><h3>Upload a tackle video</h3></label>
+            <label for="img"><h5>Upload a new tackle video</h5></label>
             <br>
             <input type="file" id="vid" name="vid" accept="video/*">
             <br><br>
             <input type="Submit" value="Analyze my tackle">
         </form>
         <br>
+
     </div>
    {% include 'footer.html' %}
 
