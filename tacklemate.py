@@ -3,8 +3,7 @@ import os
 import flask
 import urllib.parse as up
 import auth
-
-database_url = "postgres://nyodofai:wZThMXsX6hbgqr5PNbgN93kkDA9P3SAo@peanut.db.elephantsql.com/nyodofai"
+import formula
 
 app = flask.Flask(__name__, template_folder='static/templates')
 app.secret_key = os.environ['APP_SECRET_KEY']
@@ -34,25 +33,73 @@ def logoutgoogle():
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    #username = "Priya"
     username = auth.authenticate()
-    html_code = flask.render_template('index.html', username=username)
+    given = flask.session.get('given_name')
+    html_code = flask.render_template('index.html', username=username,
+                                    given=given)
+    response = flask.make_response(html_code)
+
+    return response
+
+
+@app.route('/get_scores', methods=['POST'])
+def get_scores():
+    print("in get_scores python function")
+    username = auth.authenticate()
+    given = flask.session.get('given_name')
+
+    # Get data embedded in the post request body
+    data = flask.request.json
+    video = data["video"]
+    # timestamp = data['timestamp']
+    print("Type of video:", type(video))
+    print(len(video))
+    #write each character of string into file, then put file into algorithm
+
+    video_bytes = video.encode('utf-8')
+    print("hello")
+    with open('testfile.mp4', 'wb') as wfile:
+        wfile.write(video_bytes)
+    print("hello2")
+
+    # print(timestamp)
+
+
+
+    # Get form inputs
+    '''
+    vid = flask.request.form.get("vid")
+    side = flask.request.form.get("side")
+    print("Read video filename:", vid)
+    print("type of vid:", type(vid))
+    print("Tackle side:", side)
+    '''
+
+    # Calculate the tackle score
+    #scores = formula.score(vid)
+
+    html_code = flask.render_template('results.html', username=username,
+                                    given=given)
     response = flask.make_response(html_code)
     return response
 
+
+
 @app.route('/stats', methods=['GET'])
 def stats():
-    #username = "Priya"
     username = auth.authenticate()
-    html_code = flask.render_template('stats.html', username=username)
+    given = flask.session.get('given_name')
+    html_code = flask.render_template('stats.html', username=username,
+                                        given=given)
     response = flask.make_response(html_code)
     return response
 
 @app.errorhandler(404)
 def page_not_found(e):
-    #username = "Priya"
     username = auth.authenticate()
-    html_code = flask.render_template('404.html', username=username)
+    given = flask.session.get('given_name')
+    html_code = flask.render_template('404.html', username=username,
+                                        given=given)
     response = flask.make_response(html_code)
     return response
 

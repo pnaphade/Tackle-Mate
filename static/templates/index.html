@@ -15,17 +15,55 @@
         <h3>Welcome, {{given}}!</h3>
         <br>
 
-        <form action=>
-            <label for="img"><h5>Upload a new tackle video</h5></label>
+
+    <button id="butOpenFile">Upload a video</button><br><br>
+    <textarea id="textArea" rows="1" cols="50"></textarea><br>
+    <input id="submit" type="Submit" value="Analyze my tackle" onclick="return send_vid_data(contents);">
+
+
+        <!--
+        //
+
+
+            -->
+
+        <!-- <form action="/get_score" method="post">
+        <button id="butOpenFile">butOpenFile</button>
+
+        <form>
+            <label for="img"><h5>Score a tackle</h5></label>
             <br>
-            <input type="file" id="vid" name="vid" accept="video/*">
+
+            <label for="input">Choose a video:</label> <br>
+            <input type="file" id="vid" name="input_video" accept="video/*">
+            <video id="vid_player" width="400rem" height="250rem" controls style="display: none;"></video>
+            <br>
+
+
+            <small> Please browse to the timestamp where you made contact with the pad. </small>
             <br><br>
-            <input type="Submit" value="Analyze my tackle">
+
+            Which shoulder did you tackle with?<br>
+            <small> if a shoulder did not make contact with the pad, or
+                both shoulders made contact with th pad, then choose
+                the shoulder that was further from the camera while
+                filming.</small>
+            <br>
+            <input type="radio" id="right" name="side" value="right">
+            <label for="left">Left</label>
+            <input type="radio" id="left" name="side" value="left">
+            <label for="right">Right</label>
+            <br><br>
+
+            <input type="Submit" value="Analyze my tackle" onclick="return timestamp();">
         </form>
         <br>
 
-    </div>
+
+    </div> -->
    {% include 'footer.html' %}
+
+   <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
 
 </body>
 </html>
