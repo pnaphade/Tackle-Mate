@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 import flask
-import urllib.parse as up
 import auth
 import formula
 
@@ -43,11 +42,12 @@ def index():
 
 @app.route('/upload_static_file', methods=['POST'])
 def upload_static_file():
-    print("Got request in static files")
-    print(flask.request.files)
+    print("Received upload request in python server")
     f = flask.request.files['static_file']
     f.save(f.filename)
-    resp = {"success": True, "response": "file saved!"}
+    print("Successfully saved file", f.filename)
+    #formula(f.filename)
+    resp = {"success": True, "response": "file saved!", "filename": f.filename}
     return flask.jsonify(resp), 200
 
 @app.route('/get_scores', methods=['POST'])

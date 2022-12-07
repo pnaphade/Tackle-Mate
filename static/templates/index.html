@@ -11,15 +11,20 @@
     {% include 'header.html' %}
 
    <div style="padding-left: 1rem;">
-        <br>
-        <h3>Welcome, {{given}}!</h3>
-        <br>
 
-        <form enctype = "multipart/form-data" onsubmit="return false;" >
-            <input id="file" type="file" name="static_file" />
-            <button id="upload-button" onclick="uploadFile(this.form)"> Upload </button>
-            </form>
-        <div id="static_file_response"> </div>
+    <br> <h3>Welcome, {{given}}!</h3> <br>
+
+
+    <h6>Choose a video to upload:</h6>
+
+    <form enctype = "multipart/form-data" onsubmit="return false;" >
+        <input id="file" type="file" name="static_file"> <br> <br>
+        <button id="upload-button" onclick="uploadFile(this.form)"> Upload </button>
+
+    </form>
+
+    <!-- placeholder for upload status text -->
+    <div id="static_file_response"> </div>
 
     <!-- <button id="butOpenFile">Upload a video</button><br><br>
     <textarea id="textArea" rows="1" cols="50"></textarea><br>
@@ -63,10 +68,10 @@
 
             <input type="Submit" value="Analyze my tackle" onclick="return timestamp();">
         </form>
-        <br>
+        <br> -->
 
 
-    </div> -->
+    </div>
    {% include 'footer.html' %}
 
    <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
