@@ -8,5 +8,5 @@ opencv-python
 matplotlib
 google-api-python-client
 http.client
-urllib2
+urllib.parse
 oauth2client
