@@ -15,11 +15,13 @@
     <br> <h3>Welcome, {{given}}!</h3> <br>
 
 
-    <h6>Choose a video to upload:</h6>
+    <h5>To get started, choose a video to upload:</h5>
 
     <form enctype = "multipart/form-data" onsubmit="return false;" >
-        <input id="file" type="file" name="static_file" accept="video/*"> <br> <br>
-        <button id="upload-button" onclick="uploadFile(this.form)"> Upload </button>
+        <input id="file" type="file" name="static_file" accept="video/*">
+        <video id="video" width="350rem" height="200rem" controls style="display: none;"></video>
+        <br><br>
+        <button id="upload-button" onclick="uploadFile(this.form)"> Score my tackle </button>
 
     </form>
 

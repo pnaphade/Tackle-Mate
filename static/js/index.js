@@ -1,5 +1,15 @@
+document.getElementById("file").addEventListener("change", function() {
+    var media = URL.createObjectURL(this.files[0]);
+    var video = document.getElementById("video");
+    video.src = media;
+    video.style.display = "block";
+    video.play();
+  });
+
 function uploadFile(form){
     const formData = new FormData(form);
+
+    // if name of file is not set, prompt user to upload
     if(!formData.get("static_file").name) {
         alert("Please select a video to upload")
         return
