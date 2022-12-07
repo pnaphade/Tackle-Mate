@@ -56,15 +56,31 @@ def get_scores():
     given = flask.session.get('given_name')
 
     video_fn = flask.request.args.get("fn")
-    timestamp = flask.request.args.get("timestamp")
+    timestamp = float(flask.request.args.get("timestamp"))
     print("Video filename", video_fn)
     print("Tackle timestamp:", timestamp)
 
     # Calculate the tackle score
-    frames = formula.score(video_fn)
+    scores, length = formula.score(video_fn, timestamp)
+    rating = {0:"poor", 1:"fair", 2:"good", 3:"excellent"}
+    h_feeback = \
+        {0:"Minimal change in height at tackle. Try to bend the knees \
+            and drop the shoulders.",
+        1:"Some decrease in height at tackle. Try to drop to where the \
+            ball carrier's knees would be.", \
+        2:"Good decrease in height at tackle! Try to drop to where the \
+            ball carrier's knees would be.",
+        3:"Excellent drop in height! As an excercise, try to brush the \
+            hands against the ground before making contact."}
+
+    height_score = scores["height"]
+    height_rating = rating[height_score]
+    height_feedback = h_feeback[height_score]
 
     html_code = flask.render_template('results.html', username=username,
-            given=given, video_fn=video_fn, timestamp=timestamp, frames=frames)
+            given=given, video_fn=video_fn, timestamp=round(timestamp, 2),
+            height_score=height_score, height_rating=height_rating,
+            height_feedback=height_feedback, length=length)
     response = flask.make_response(html_code)
     return response
 

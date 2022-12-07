@@ -105,7 +105,7 @@ def reconstruct(video_filepath):
     cap.release()
     cv2.destroyAllWindows()
 
-    return keypoints_timeseries
+    return keypoints_timeseries, fps
 
 if __name__=='__main__':
     reconstruct("test1.mov")

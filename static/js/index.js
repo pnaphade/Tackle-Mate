@@ -1,9 +1,12 @@
 document.getElementById("file").addEventListener("change", function() {
     var media = URL.createObjectURL(this.files[0]);
     var video = document.getElementById("video");
+    var video_msg = document.getElementById("video msg")
     video.src = media;
     video.style.display = "block";
     video.play();
+    video_msg.innerHTML = "<strong> Please browse to the point in the video where you make contact with the pad.  </strong>"
+
   });
 
 function uploadFile(form){

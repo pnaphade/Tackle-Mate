@@ -3,21 +3,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def score(video_filepath):
+def score(video_filepath, timestamp):
 
-    keypoints_timeseries = reconstruct.reconstruct(video_filepath)
+    keypoints_timeseries, fps = reconstruct.reconstruct(video_filepath)
 
     n_frames = len(keypoints_timeseries)
+    length = round(n_frames*(1/fps), 2)
     print("Number of frames:", n_frames)
-
-    '''
-
-    # For the first framee: 6 people x 17 keypoints x (y coord, x coord, conf)
-    print("Shape of keypoints at each frame:", keypoints_timeseries[0].shape)
+    print("Frames per second:", fps)
+    print("Length of video:", length)
 
     # Extract keypoints for first person
     person0 = np.array([person[0] for person in keypoints_timeseries])
-    print("Shape of keypoints timeseries for person 0:", person0.shape) # frames, 17, 3
+    print("Shape of keypoints timeseries:", person0.shape) # frames, 17, 3
     print("-----------------------------------------------------------")
 
 
@@ -32,109 +30,84 @@ def score(video_filepath):
     # Final dimension of person array is encoded as y, x, confidence
     coords_index = {"y":0, "x":1, "conf":2}
 
-    # Extract keypoints time series
 
+    # Extract keypoints time series
     left_shoulder_y = person0[:, body_index["left shoulder"], coords_index["y"]]
     left_shoulder_y = 1 - left_shoulder_y   # transform so 1 is highest
-    '''
-    '''
     left_ankle_y = person0[:, body_index["left ankle"], coords_index["y"]]
     left_ankle_y = 1 - left_ankle_y   # transform so 1 is highest
-    '''
 
-    '''
-    # TO DO take score mask so we only compare valid keypoints estimations
-    score_lshoulder = person0[:, body_index["left shoulder"], coords_index["conf"]]
-    score_lshoulder_mask = score_lshoulder > 0.1
-    left_shoulder_y_scored = left_shoulder_y[score_lshoulder_mask]
 
-    print("shape of left_shoulder_y:", left_shoulder_y.shape)
-    print("shape of score_lshoulder_mask", score_lshoulder_mask.shape)
-    print("number of frames with score > 0.1", score_lshoulder_mask.sum())
-    print("shape of left_shoulder_y_scored", left_shoulder_y_scored.shape)
-    print(left_shoulder_y_scored)
+    # Calculate difference between shoulder and ankle during tackle
+    tackle_frame = int(round((fps * float(timestamp))))
+    print(f"Tackle frame: {tackle_frame}/{n_frames}")
+    should_height_tackle = left_shoulder_y[tackle_frame] - left_ankle_y[tackle_frame]
 
-    fig1, ax1 = plt.subplots()
-    ax1.plot(left_shoulder_y_scored)
-    ax1.set_xlabel("Frames")
-    ax1.set_ylabel("Left shoulder x position")
+    # Calculate difference between shoulder and ankle at every point before tackle
+    lshoulder_pretackle = left_shoulder_y[:tackle_frame-1]
+    lankle_pretackle = left_ankle_y[:tackle_frame-1]
+    should_height_pretackle = lshoulder_pretackle - lankle_pretackle
+    print("Shape of should_height_pretackle", should_height_pretackle.shape)
 
-    plt.show()
-    '''
+    # Get a mask for selecting which indices have reasonable confidence
+    lshoulder_conf = person0[:, body_index["left shoulder"], coords_index["conf"]]
+    lshoulder_conf_pretackle = lshoulder_conf[:tackle_frame-1]
+    lshoulder_conf_mask = lshoulder_conf_pretackle > 0.3
+    #print("Confidence mask:", lshoulder_conf_mask)
+
+    # Select shoulder-ankle differences which meet confidence threshold
+    should_height_pretackle_filtered = should_height_pretackle[lshoulder_conf_mask]
+    print("Shape of filtered pretackle heights", should_height_pretackle_filtered.shape)
+
+
+    # Calculate max difference between shoulder and ankle before tackle
+    max_should_height_pretackle = np.amax(should_height_pretackle_filtered)
+
+    # Calculate difference in shoulder height
+    should_diff = max_should_height_pretackle - should_height_tackle
+
+    # Calculate percent change in shoulder height
+    should_percent_change = abs(100 * (should_diff/max_should_height_pretackle))
+
+    print("Start shoulder height:", round(max_should_height_pretackle, 3))
+    print("Tackle shoulder height:", round(should_height_tackle, 3))
+    print(f"Percent change in shoulder height: {round(should_percent_change, 2)}%")
+
+    # Scoring percent in shoulder height change
+    if(should_percent_change < 20):
+        score = 0
+    if(20 <= should_percent_change  < 40):
+        score = 1
+    if(40 <= should_percent_change < 50):
+        score = 2
+    if(should_percent_change >= 50):
+        score = 3
 
     scores = {}
-    scores["height"] = 0
+    scores["height"] = score
     scores["accel"] = 0
     scores["wrap"] = 0
 
-    print(scores)
-    #return scores
-
-    return n_frames
-
+    print("Scores:", scores)
+    feedback = {0:"poor", 1:"fair", 2:"good", 3:"excellent"}
+    print("-----------------------------------------------------------")
+    print(f"Tackle height score: {score}/3, {feedback[score]}")
+    print("-----------------------------------------------------------")
+    return scores, length
 
     '''
-    # Take average of left ankle y position
-    avg_left_ankle_y = np.mean(left_ankle_y)
-
-
-
-    # Compute difference between shoulder and avg ankle height
-    shoulder_avankle_diff = left_shoulder_y - avg_left_ankle_y
-
-    should_start = shoulder_avankle_diff[0]
-    should_min = np.min(shoulder_avankle_diff)
-    print("Start should height:", round(should_start, 3))
-    print("Minimum should height:", round(should_min, 3))
-    should_percent_change = 100*(should_min-should_start)/(should_start)
-    should_percent_change = abs(round(should_percent_change, 2))
-    print("Percent change in shoulder height:", should_percent_change)
-
-
-
-
-    code for calculating acceleration
+    # code for calculating acceleration
     left_shoulder_x = person0[:, body_index["left shoulder"], coords_index["x"]]
     score0 = person0[:, body_index["left shoulder"], coords_index["conf"]]
     score_mask = score0 > 0.5
     print("Shape of score mask:", score_mask.shape)
     print("Number of frames with score > 0.5:", score_mask.sum())
-
     # don't include frames with a score less than 0.5
     left_shoulder_x = left_shoulder_x[score_mask]
     left_shoulder_x = 1 - left_shoulder_x   # transform so 1 is highest
 
-    fig1, ax1 = plt.subplots()
-    ax1.plot(left_shoulder_x)
-    ax1.set_xlabel("Frames")
-    ax1.set_ylabel("Left shoulder x position")
-
-    plt.show()
-    '''
-
-'''
-    # Scoring percent in shoulder height change
-    if(should_percent_change < 20):
-        score = 0
-    if(20 <= should_percent_change  < 30):
-        score = 1
-    if(30 <= should_percent_change < 40):
-        score = 2
-    if(should_percent_change >= 40):
-        score = 3
-
-    feedback = {0:"poor", 1:"fair", 2:"good", 3:"excellent"}
-    print("-----------------------------------------------------------")
-    print(f"Tackle height score: {score}/3, {feedback[score]}")
-    print("-----------------------------------------------------------")
-
-
     visualize(shoulder_avankle_diff)
-
-    return {"start shoulder":should_start, "min shoulder":should_min, \
-            "percent change":should_percent_change, "score":score, \
-            "feedback":feedback[score]}
-            '''
+    '''
 
 
 '''
@@ -150,11 +123,4 @@ def visualize(shoulder_avankle_diff):
 '''
 
 if __name__ == '__main__':
-    score('videos/train/32_333.MOV')
-
-# Using shoulder_ankle_diff or shoulder_avankle_diff, calculate the
-# minimum and maximum diffs and then take the percent diff between them
-# This represents the percent the tackler dropped their shoulders.
-# Encode some range that matches percentages to scores.
-# Deliver scores.
-# relies on video being trimmed to isolate tackle
+    score(video_filepath='videos/train/32_333.MOV', timestamp=1.941884)
