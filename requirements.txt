@@ -6,4 +6,7 @@ tensorflow
 tensorflow-hub
 opencv-python
 matplotlib
-
+google-api-python-client
+http.client
+urlib2
+oauth2client

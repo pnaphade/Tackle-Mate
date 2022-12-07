@@ -15,10 +15,16 @@
         <h3>Welcome, {{given}}!</h3>
         <br>
 
+        <form enctype = "multipart/form-data" onsubmit="return false;" >
+            <input id="file" type="file" name="static_file" />
+            <button id="upload-button" onclick="uploadFile(this.form)"> Upload </button>
+            </form>
+        <div id="static_file_response"> </div>
 
-    <button id="butOpenFile">Upload a video</button><br><br>
+    <!-- <button id="butOpenFile">Upload a video</button><br><br>
     <textarea id="textArea" rows="1" cols="50"></textarea><br>
-    <input id="submit" type="Submit" value="Analyze my tackle" onclick="return send_vid_data(contents);">
+
+    <input id="submit" type="Submit" value="Analyze my tackle" onclick="return send_vid_data(contents);">-->
 
 
         <!--

@@ -41,6 +41,14 @@ def index():
 
     return response
 
+@app.route('/upload_static_file', methods=['POST'])
+def upload_static_file():
+    print("Got request in static files")
+    print(flask.request.files)
+    f = flask.request.files['static_file']
+    f.save(f.filename)
+    resp = {"success": True, "response": "file saved!"}
+    return flask.jsonify(resp), 200
 
 @app.route('/get_scores', methods=['POST'])
 def get_scores():
