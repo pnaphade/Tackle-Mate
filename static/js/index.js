@@ -14,7 +14,8 @@ function uploadFile(form){
         alert("Please select a video to upload")
         return
     }
-    var oOutput = document.getElementById("static_file_response")
+    var upload_status = document.getElementById("upload status")
+    var analyze_status = document.getElementById("analyze status")
 
     // create new post request
     var oReq = new XMLHttpRequest();
@@ -23,17 +24,21 @@ function uploadFile(form){
     // handle response of python server
     oReq.onload = function(oEvent) {
         if (oReq.status == 200) {
-            oOutput.innerHTML = "Uploaded!";
+            upload_status.innerHTML = "Video uploaded!";
             resp = JSON.parse(oReq.responseText)
             console.log(resp)
-            alert(resp.filename + " successfully uploaded!")
+            // alert(resp.filename + " successfully uploaded!")
 
             // redirect user to get_scores server function
             // note: window.location.href uses GET, but really should
             // be using POST here...
-            scores_url = "/get_scores?fn="
-            scores_url += encodeURIComponent(resp.filename)
-            window.location.href = scores_url;}
+            timestamp = document.getElementById("video").currentTime
+            score_url = "/get_scores?fn="
+            score_url += encodeURIComponent(resp.filename)
+            score_url += "&timestamp="
+            score_url += encodeURIComponent(timestamp)
+            analyze_status.innerHTML = "Analyzing video..."
+            window.location.href = score_url;}
 
             // fetch("/get_scores", {
             //     method: "POST",
@@ -44,40 +49,12 @@ function uploadFile(form){
             //   .then((response) => response.json())
             // }
         else {
-            oOutput.innerHTML = "Error occurred when trying to upload your file.<br>";
+            upload_status.innerHTML = "Error occurred when trying to upload your file.<br>";
             }
         };
 
     // send user's file to python server
-    oOutput.innerHTML = "Sending file...";
+    upload_status.innerHTML = "Sending file...";
     console.log("Sending file...")
     oReq.send(formData);
 }
-
-
-// function send_vid_data(video_contents){
-
-//     alert("hello")
-//     if (typeof video_contents == 'undefined') {
-//         alert("Please upload a video")
-//         return
-//     }
-
-//     let data = {
-//         "video": video_contents,
-//         //"timestamp": timestamp
-//     };
-
-//     alert("about to fetch")
-//     // // Handle announcement
-//     fetch("/get_scores",
-//         {method: 'POST',
-//         headers: {'Content-Type': 'application/json'},
-//         body: JSON.stringify(data)})
-//     .then((response) => response.text())
-//     .then((text) => {
-//         if (text=="success")
-//             alert("Successfully sent your announcement!")
-//         else alert("Error - unable to send announcement")
-//     });
-// }

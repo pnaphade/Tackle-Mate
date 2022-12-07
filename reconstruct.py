@@ -72,6 +72,7 @@ def reconstruct(video_filepath):
 
     keypoints_timeseries = []
     cap = cv2.VideoCapture(video_filepath)
+    fps = cap.get(cv2.CAP_PROP_FPS)
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -95,10 +96,11 @@ def reconstruct(video_filepath):
 
         # Draw body keypoints and edges for each person, confidence threshold
         loop_through_people(frame, keypoints_with_scores, EDGES, 0.3)
-
+        '''
         cv2.imshow('Movenet Multipose', frame)
         if cv2.waitKey(10) & 0xFF==ord('q'):
             break
+        '''
 
     cap.release()
     cv2.destroyAllWindows()
@@ -106,4 +108,4 @@ def reconstruct(video_filepath):
     return keypoints_timeseries
 
 if __name__=='__main__':
-    reconstruct()
+    reconstruct("test1.mov")

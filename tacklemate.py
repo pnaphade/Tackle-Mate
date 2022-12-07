@@ -56,27 +56,15 @@ def get_scores():
     given = flask.session.get('given_name')
 
     video_fn = flask.request.args.get("fn")
-    print(video_fn)
-    # Get data embedded in the post request body
-    #data = flask.request.json
-    #video_fn = data["filename"]
-    # timestamp = data['timestamp']
-    #print("get_scores reads the filename: ", video_fn)
-    # print(timestamp)
-    # Get form inputs
-    '''
-    vid = flask.request.form.get("vid")
-    side = flask.request.form.get("side")
-    print("Read video filename:", vid)
-    print("type of vid:", type(vid))
-    print("Tackle side:", side)
-    '''
+    timestamp = flask.request.args.get("timestamp")
+    print("Video filename", video_fn)
+    print("Tackle timestamp:", timestamp)
 
     # Calculate the tackle score
-    #scores = formula.score(vid)
+    frames = formula.score(video_fn)
 
     html_code = flask.render_template('results.html', username=username,
-                                    given=given, video_fn=video_fn)
+            given=given, video_fn=video_fn, timestamp=timestamp, frames=frames)
     response = flask.make_response(html_code)
     return response
 
