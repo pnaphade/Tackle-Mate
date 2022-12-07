@@ -50,30 +50,19 @@ def upload_static_file():
     resp = {"success": True, "response": "file saved!", "filename": f.filename}
     return flask.jsonify(resp), 200
 
-@app.route('/get_scores', methods=['POST'])
+@app.route('/get_scores', methods=['GET', 'POST'])
 def get_scores():
-    print("in get_scores python function")
     username = auth.authenticate()
     given = flask.session.get('given_name')
 
+    video_fn = flask.request.args.get("fn")
+    print(video_fn)
     # Get data embedded in the post request body
-    data = flask.request.json
-    video = data["video"]
+    #data = flask.request.json
+    #video_fn = data["filename"]
     # timestamp = data['timestamp']
-    print("Type of video:", type(video))
-    print(len(video))
-    #write each character of string into file, then put file into algorithm
-
-    video_bytes = video.encode('utf-8')
-    print("hello")
-    with open('testfile.mp4', 'wb') as wfile:
-        wfile.write(video_bytes)
-    print("hello2")
-
+    #print("get_scores reads the filename: ", video_fn)
     # print(timestamp)
-
-
-
     # Get form inputs
     '''
     vid = flask.request.form.get("vid")
@@ -87,7 +76,7 @@ def get_scores():
     #scores = formula.score(vid)
 
     html_code = flask.render_template('results.html', username=username,
-                                    given=given)
+                                    given=given, video_fn=video_fn)
     response = flask.make_response(html_code)
     return response
 

@@ -1,5 +1,9 @@
 function uploadFile(form){
     const formData = new FormData(form);
+    if(!formData.get("static_file").name) {
+        alert("Please select a video to upload")
+        return
+    }
     var oOutput = document.getElementById("static_file_response")
 
     // create new post request
@@ -13,7 +17,22 @@ function uploadFile(form){
             resp = JSON.parse(oReq.responseText)
             console.log(resp)
             alert(resp.filename + " successfully uploaded!")
-            }
+
+            // redirect user to get_scores server function
+            // note: window.location.href uses GET, but really should
+            // be using POST here...
+            scores_url = "/get_scores?fn="
+            scores_url += encodeURIComponent(resp.filename)
+            window.location.href = scores_url;}
+
+            // fetch("/get_scores", {
+            //     method: "POST",
+            //     headers: {'Content-Type': 'application/json'},
+            //     body: resp,
+            //     redirect: "follow",
+            //   })
+            //   .then((response) => response.json())
+            // }
         else {
             oOutput.innerHTML = "Error occurred when trying to upload your file.<br>";
             }
