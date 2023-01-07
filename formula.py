@@ -1,11 +1,10 @@
 import reconstruct
 import numpy as np
-import matplotlib.pyplot as plt
 
 
-def score(video_filepath, timestamp):
+def score(model, video_filepath, timestamp):
 
-    keypoints_timeseries, fps = reconstruct.reconstruct(video_filepath)
+    keypoints_timeseries, fps = reconstruct.reconstruct(model, video_filepath)
 
     n_frames = len(keypoints_timeseries)
     length = round(n_frames*(1/fps), 2)

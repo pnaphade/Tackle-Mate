@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import os
 import flask
+import tensorflow_hub as hub
 import auth
 import formula
 
+model =  None
 app = flask.Flask(__name__, template_folder='static/templates')
 app.secret_key = os.environ['APP_SECRET_KEY']
 
@@ -61,7 +63,7 @@ def get_scores():
     print("Tackle timestamp:", timestamp)
 
     # Calculate the tackle score
-    scores, length = formula.score(video_fn, timestamp)
+    scores, length = formula.score(movenet_model, video_fn, timestamp)
     rating = {0:"poor", 1:"fair", 2:"good", 3:"excellent"}
     h_feeback = \
         {0:"Minimal change in height at tackle. Try to bend the knees \
@@ -104,5 +106,11 @@ def page_not_found(e):
     response = flask.make_response(html_code)
     return response
 
+def load_model():
+    global movenet_model
+    movenet_model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
+    movenet_model = movenet_model.signatures['serving_default'] # default model
+
 if __name__ == '__main__':
+    load_model()
     app.run(debug=True, ssl_context='adhoc')

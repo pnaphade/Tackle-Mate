@@ -1,8 +1,6 @@
 import os
 import tensorflow as tf
-import tensorflow_hub as hub
 import cv2
-from matplotlib import pyplot as plt
 import numpy as np
 
 # suppress all tensorflow info messages
@@ -39,7 +37,7 @@ def draw_connections(frame, keypoints, edges, confidence_threshold):
             cv2.line(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0,0,255), 4)
 
 
-def reconstruct(video_filepath):
+def reconstruct(model, video_filepath):
 
     EDGES = {
     (0, 1): 'm',
@@ -61,10 +59,6 @@ def reconstruct(video_filepath):
     (12, 14): 'c',
     (14, 16): 'c'
     }
-
-    # Movenet multipose lightening model
-    model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
-    movenet = model.signatures['serving_default'] # default model
 
     print("-----------------------------------------------------------")
     print("Reading video from file", video_filepath)
@@ -88,7 +82,7 @@ def reconstruct(video_filepath):
         input_img = tf.cast(img, dtype=tf.int32)
 
         # Feed frame to movenet
-        results = movenet(input_img)
+        results = model(input_img)
 
         # 6 people, 17 keypoints, and  y coord, x coord, confidence for each keypoint
         keypoints_with_scores = results['output_0'].numpy()[:,:,:51].reshape((6,17,3))
@@ -96,16 +90,13 @@ def reconstruct(video_filepath):
 
         # Draw body keypoints and edges for each person, confidence threshold
         loop_through_people(frame, keypoints_with_scores, EDGES, 0.3)
-        '''
-        cv2.imshow('Movenet Multipose', frame)
+
+        #cv2.imshow('Movenet Multipose', frame)
         if cv2.waitKey(10) & 0xFF==ord('q'):
             break
-        '''
+
 
     cap.release()
     cv2.destroyAllWindows()
 
     return keypoints_timeseries, fps
-
-if __name__=='__main__':
-    reconstruct("test1.mov")
