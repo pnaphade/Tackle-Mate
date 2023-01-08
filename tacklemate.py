@@ -85,14 +85,20 @@ def get_scores():
     print("Video filename", video_fn)
     print("Tackle timestamp:", timestamp)
 
+
+   ############### NO SERVER ERROR UNTIL HERE ###################
+
+
+
+     # Calculate the tackle score
+    scores, length = formula.score(movenet_model, video_fn, timestamp)
+
     # for debugging internal server error
     html_code = flask.render_template('404.html', username=username,
                                         given=given)
     response = flask.make_response(html_code)
     return response
 
-     # Calculate the tackle score
-    scores, length = formula.score(movenet_model, video_fn, timestamp)
     rating = {0:"poor", 1:"fair", 2:"good", 3:"excellent"}
     h_feeback = \
         {0:"Minimal change in height at tackle. Try to bend the knees \
