@@ -36,8 +36,12 @@ def logoutgoogle():
 # For local development only. MoveNet is accessed via a picked object for production.
 def load_model():
     global model
-    model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
-    #model = model.signatures['serving_default'] # default model
+    try:
+        model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
+        model = model.signatures['serving_default'] # default model
+        return("model loaded successfully")
+    except Exception as e:
+        return e
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
@@ -47,16 +51,17 @@ def index():
     given = flask.session.get('given_name')
     tf_version = tf.__version__
     tf_hub_version = hub.__version__
-    #if model is None:
+    if model is None:
         # no server error until this point...
-        #load_model()
+        load_status = load_model()
         #html_code = flask.render_template('404.html', username=username,
                                      #   given=given)
         #response = flask.make_response(html_code)
         #return response
 
     html_code = flask.render_template('index.html', username=username,
-                                    given=given, tf= tf_version, hub=tf_hub_version)
+                                    given=given, tf= tf_version, hub=tf_hub_version,
+                                    load_status =load_status)
     response = flask.make_response(html_code)
 
     return response
