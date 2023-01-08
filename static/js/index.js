@@ -27,7 +27,6 @@ function uploadVideo(form){
     // handle response of python server
     oReq.onload = function(oEvent) {
         if (oReq.status == 200) {
-            alert("video uploaded to google cloud storage")
             upload_status.innerHTML = "Video uploaded!";
             resp = JSON.parse(oReq.responseText)
             console.log(resp)
@@ -41,7 +40,6 @@ function uploadVideo(form){
             score_url += "&timestamp="
             score_url += encodeURIComponent(timestamp)
             analyze_status.innerHTML = "Analyzing video..."
-            alert("about to redirect to scoring page")
             window.location.href = score_url;}
 
         else {

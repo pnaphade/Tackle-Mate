@@ -37,7 +37,7 @@ def logoutgoogle():
 def load_model():
     global model
     try:
-        model = hub.load('./movenet-model')
+        model = tf.saved_model.load("./movenet-model")
         model = model.signatures['serving_default'] # default model
         return("model loaded successfully")
     except Exception as e:
@@ -51,13 +51,12 @@ def index():
     given = flask.session.get('given_name')
     tf_version = tf.__version__
     tf_hub_version = hub.__version__
+
     if model is None:
-        # no server error until this point...
         load_status = load_model()
-        #html_code = flask.render_template('404.html', username=username,
-                                     #   given=given)
-        #response = flask.make_response(html_code)
-        #return response
+    else:
+        load_status = "model already loaded"
+
 
     html_code = flask.render_template('index.html', username=username,
                                     given=given, tf= tf_version, hub=tf_hub_version,
