@@ -2,6 +2,7 @@
 import os
 import flask
 import tensorflow_hub as hub
+from google.cloud import storage
 import auth
 import formula
 
@@ -42,15 +43,36 @@ def index():
 
     return response
 
-@app.route('/upload_static_file', methods=['POST'])
-def upload_static_file():
-    print("Received upload request in python server")
-    f = flask.request.files['static_file']
-    f.save(f.filename)
-    print("Successfully saved file", f.filename)
-    #formula(f.filename)
-    resp = {"success": True, "response": "file saved!", "filename": f.filename}
+@app.route('/upload_video', methods=['POST'])
+def upload_video():
+    print("Received video upload request")
+    tackle_vid = flask.request.files['video_file']
+
+    # The ID of Google Cloud Storage bucket
+    bucket_name = "tackle-videos"
+
+    # The desired name of the uploaded GCS object (blob)
+    destination_blob_name = "test_upload_video" #replace this with int key using sql query to all the videos?
+
+    # Construct a client-side representation of the blob.
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
+
+    # Rewind the stream to the beginning. This step can be omitted if the input
+    # stream will always be at a correct position.
+    tackle_vid.seek(0)
+
+    # Upload data from the stream to your bucket.
+    blob.upload_from_file(tackle_vid)
+
+    print(
+        f"Tackle video successfully uploaded as {destination_blob_name} \
+        to the {bucket_name} bucket in TackleMate's Google Cloud Storage"
+    )
+    resp = {"success": True, "response": "file uploaded!", "filename": tackle_vid.filename}
     return flask.jsonify(resp), 200
+
 
 @app.route('/get_scores', methods=['GET', 'POST'])
 def get_scores():

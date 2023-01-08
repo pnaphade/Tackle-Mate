@@ -5,15 +5,15 @@ document.getElementById("file").addEventListener("change", function() {
     video.src = media;
     video.style.display = "block";
     video.play();
-    video_msg.innerHTML = "<strong> Please browse to the point in the video where you make contact with the pad.  </strong>"
+    video_msg.innerHTML = "<strong> Please browse to the point in the video where you make contact with the pad. </strong>"
 
   });
 
-function uploadFile(form){
+function uploadVideo(form){
     const formData = new FormData(form);
 
-    // if name of file is not set, prompt user to upload
-    if(!formData.get("static_file").name) {
+    // if name of video is not set, prompt user to upload
+    if(!formData.get("video_file").name) {
         alert("Please select a video to upload")
         return
     }
@@ -22,7 +22,7 @@ function uploadFile(form){
 
     // create new post request
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "upload_static_file", true);
+    oReq.open("POST", "upload_video", true);
 
     // handle response of python server
     oReq.onload = function(oEvent) {
@@ -30,7 +30,6 @@ function uploadFile(form){
             upload_status.innerHTML = "Video uploaded!";
             resp = JSON.parse(oReq.responseText)
             console.log(resp)
-            // alert(resp.filename + " successfully uploaded!")
 
             // redirect user to get_scores server function
             // note: window.location.href uses GET, but really should
@@ -43,21 +42,13 @@ function uploadFile(form){
             analyze_status.innerHTML = "Analyzing video..."
             window.location.href = score_url;}
 
-            // fetch("/get_scores", {
-            //     method: "POST",
-            //     headers: {'Content-Type': 'application/json'},
-            //     body: resp,
-            //     redirect: "follow",
-            //   })
-            //   .then((response) => response.json())
-            // }
         else {
-            upload_status.innerHTML = "Error occurred when trying to upload your file.<br>";
+            upload_status.innerHTML = "An error occurred when trying to upload your video. Please try again. <br>";
             }
         };
 
-    // send user's file to python server
-    upload_status.innerHTML = "Sending file...";
-    console.log("Sending file...")
+    // send user's video to python server
+    upload_status.innerHTML = "Uploading video...";
+    console.log("Uploading video...")
     oReq.send(formData);
 }
