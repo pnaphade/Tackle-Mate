@@ -32,6 +32,12 @@ def logoutgoogle():
 
 #----------------------------------------------------------------------
 
+# For local development only. MoveNet is accessed via a picked object for production.
+def load_model():
+    global movenet_model
+    movenet_model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
+    movenet_model = movenet_model.signatures['serving_default'] # default model
+
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
@@ -145,12 +151,6 @@ def page_not_found(e):
                                         given=given)
     response = flask.make_response(html_code)
     return response
-
-# For local development only. MoveNet is accessed via a picked object for production.
-def load_model():
-    global movenet_model
-    movenet_model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
-    movenet_model = movenet_model.signatures['serving_default'] # default model
 
 if __name__ == '__main__':
     load_model()
