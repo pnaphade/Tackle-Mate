@@ -14,6 +14,9 @@
 
     <br> <h3>Welcome, {{given}}!</h3> <br>
 
+    Tensorflow version: {{tf}}
+    Tensorflow hub version: {{hub}}
+
 
     <h5>To get started, choose a video to upload:</h5>
 
@@ -75,6 +78,14 @@
         </form>
         <br> -->
 
+    <!-- Require the peer dependencies of pose-detection. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+
+    <!-- You must explicitly require a TF.js backend if you're not using the TF.js union bundle. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
 
     </div>
    {% include 'footer.html' %}
