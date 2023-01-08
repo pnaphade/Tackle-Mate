@@ -76,6 +76,7 @@ def upload_video():
 
 @app.route('/get_scores', methods=['GET', 'POST'])
 def get_scores():
+    # somewhere in this function is where the error occurs...
     username = auth.authenticate()
     given = flask.session.get('given_name')
 
@@ -84,7 +85,13 @@ def get_scores():
     print("Video filename", video_fn)
     print("Tackle timestamp:", timestamp)
 
-    # Calculate the tackle score
+    # for debugging internal server error
+    html_code = flask.render_template('404.html', username=username,
+                                        given=given)
+    response = flask.make_response(html_code)
+    return response
+
+     # Calculate the tackle score
     scores, length = formula.score(movenet_model, video_fn, timestamp)
     rating = {0:"poor", 1:"fair", 2:"good", 3:"excellent"}
     h_feeback = \
