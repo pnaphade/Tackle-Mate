@@ -37,7 +37,7 @@ def logoutgoogle():
 def load_model():
     global model
     try:
-        model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
+        model = hub.load('./movenet-model')
         model = model.signatures['serving_default'] # default model
         return("model loaded successfully")
     except Exception as e:
