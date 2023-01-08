@@ -35,6 +35,10 @@ def logoutgoogle():
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
+
+    if model is None:
+        load_model()
+
     username = auth.authenticate()
     given = flask.session.get('given_name')
     html_code = flask.render_template('index.html', username=username,
@@ -45,6 +49,10 @@ def index():
 
 @app.route('/upload_video', methods=['POST'])
 def upload_video():
+
+    if model is None:
+        load_model()
+
     print("Received video upload request")
     tackle_vid = flask.request.files['video_file']
 
@@ -76,6 +84,10 @@ def upload_video():
 
 @app.route('/get_scores', methods=['GET', 'POST'])
 def get_scores():
+
+    if model is None:
+        load_model()
+
     # somewhere in this function is where the error occurs...
     username = auth.authenticate()
     given = flask.session.get('given_name')
@@ -86,18 +98,10 @@ def get_scores():
     print("Tackle timestamp:", timestamp)
 
 
-   ############### NO SERVER ERROR UNTIL HERE ###################
-
-
-
      # Calculate the tackle score
+     # THIS LINE CAUSES SERVER ERROR
     scores, length = formula.score(movenet_model, video_fn, timestamp)
 
-    # for debugging internal server error
-    html_code = flask.render_template('404.html', username=username,
-                                        given=given)
-    response = flask.make_response(html_code)
-    return response
 
     rating = {0:"poor", 1:"fair", 2:"good", 3:"excellent"}
     h_feeback = \
@@ -125,6 +129,7 @@ def get_scores():
 
 @app.route('/stats', methods=['GET'])
 def stats():
+
     username = auth.authenticate()
     given = flask.session.get('given_name')
     html_code = flask.render_template('stats.html', username=username,
@@ -141,6 +146,7 @@ def page_not_found(e):
     response = flask.make_response(html_code)
     return response
 
+# For local development only. MoveNet is accessed via a picked object for production.
 def load_model():
     global movenet_model
     movenet_model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
