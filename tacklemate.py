@@ -45,11 +45,11 @@ def index():
     username = auth.authenticate()
     given = flask.session.get('given_name')
     if model is None:
+        load_model()
         html_code = flask.render_template('404.html', username=username,
                                         given=given)
         response = flask.make_response(html_code)
         return response
-        load_model()
 
     html_code = flask.render_template('index.html', username=username,
                                     given=given)
