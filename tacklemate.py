@@ -34,9 +34,9 @@ def logoutgoogle():
 
 # For local development only. MoveNet is accessed via a picked object for production.
 def load_model():
-    global movenet_model
-    movenet_model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
-    movenet_model = movenet_model.signatures['serving_default'] # default model
+    global model
+    model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
+    model = model.signatures['serving_default'] # default model
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
@@ -106,7 +106,7 @@ def get_scores():
 
      # Calculate the tackle score
      # THIS LINE CAUSES SERVER ERROR
-    scores, length = formula.score(movenet_model, video_fn, timestamp)
+    scores, length = formula.score(model, video_fn, timestamp)
 
 
     rating = {0:"poor", 1:"fair", 2:"good", 3:"excellent"}
