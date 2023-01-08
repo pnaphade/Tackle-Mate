@@ -6,9 +6,9 @@ from google.cloud import storage
 import auth
 import formula
 
-model =  None
 app = flask.Flask(__name__, template_folder='static/templates')
 app.secret_key = os.environ['APP_SECRET_KEY']
+model =  None
 
 #----------------------------------------------------------------------
 
@@ -42,11 +42,15 @@ def load_model():
 @app.route('/index', methods=['GET'])
 def index():
 
-    if model is None:
-        load_model()
-
     username = auth.authenticate()
     given = flask.session.get('given_name')
+    if model is None:
+        html_code = flask.render_template('404.html', username=username,
+                                        given=given)
+        response = flask.make_response(html_code)
+        return response
+        load_model()
+
     html_code = flask.render_template('index.html', username=username,
                                     given=given)
     response = flask.make_response(html_code)
@@ -55,9 +59,6 @@ def index():
 
 @app.route('/upload_video', methods=['POST'])
 def upload_video():
-
-    if model is None:
-        load_model()
 
     print("Received video upload request")
     tackle_vid = flask.request.files['video_file']
@@ -90,9 +91,6 @@ def upload_video():
 
 @app.route('/get_scores', methods=['GET', 'POST'])
 def get_scores():
-
-    if model is None:
-        load_model()
 
     # somewhere in this function is where the error occurs...
     username = auth.authenticate()
@@ -153,5 +151,4 @@ def page_not_found(e):
     return response
 
 if __name__ == '__main__':
-    load_model()
     app.run(debug=True, ssl_context='adhoc')
