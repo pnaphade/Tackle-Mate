@@ -5,7 +5,7 @@ numpy
 tensorflow
 tensorflow-hub
 opencv-python
-matplotlib
+cryptography
 google-api-python-client
 http.client
 oauth2client
