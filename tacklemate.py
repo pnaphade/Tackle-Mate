@@ -3,6 +3,7 @@ import os
 import flask
 import tensorflow_hub as hub
 import tensorflow as tf
+import gunicorn
 from google.cloud import storage
 import auth
 import formula
@@ -37,7 +38,7 @@ def logoutgoogle():
 def load_model():
     global model
     try:
-        model = tf.saved_model.load("./movenet-model")
+        model = hub.load("https://tfhub.dev/google/movenet/multipose/lightning/1")
         model = model.signatures['serving_default'] # default model
         return("model loaded successfully")
     except Exception as e:
@@ -46,21 +47,21 @@ def load_model():
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
+    gversion = gunicorn.__version__
 
     username = auth.authenticate()
     given = flask.session.get('given_name')
-    tf_version = tf.__version__
-    tf_hub_version = hub.__version__
 
+    '''
     if model is None:
         load_status = load_model()
     else:
         load_status = "model already loaded"
-
+    '''
 
     html_code = flask.render_template('index.html', username=username,
-                                    given=given, tf= tf_version, hub=tf_hub_version,
-                                    load_status =load_status)
+                                    given=given,
+                                    load_status =gversion)
     response = flask.make_response(html_code)
 
     return response
