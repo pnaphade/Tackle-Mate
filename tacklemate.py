@@ -4,6 +4,7 @@ import flask
 import tensorflow_hub as hub
 import tensorflow as tf
 import gunicorn
+import logging
 from google.cloud import storage
 import auth
 import formula
@@ -12,6 +13,10 @@ app = flask.Flask(__name__, template_folder='static/templates')
 app.secret_key = os.environ['APP_SECRET_KEY']
 model =  None
 
+if __name__ != '__main__':
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
 #----------------------------------------------------------------------
 
 # Routes for authentication
@@ -42,26 +47,26 @@ def load_model():
         model = model.signatures['serving_default'] # default model
         return("model loaded successfully")
     except Exception as e:
+        app.logger.info(str(e))
         return e
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    gversion = gunicorn.__version__
-
+    app.logger.info("entering index function")
     username = auth.authenticate()
     given = flask.session.get('given_name')
 
-    '''
     if model is None:
+        app.logger.info("about to attempt model load")
         load_status = load_model()
     else:
         load_status = "model already loaded"
-    '''
+
 
     html_code = flask.render_template('index.html', username=username,
                                     given=given,
-                                    load_status =gversion)
+                                    load_status = load_status)
     response = flask.make_response(html_code)
 
     return response
