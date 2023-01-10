@@ -11,7 +11,6 @@ import formula
 
 app = flask.Flask(__name__, template_folder='static/templates')
 app.secret_key = os.environ['APP_SECRET_KEY']
-model =  None
 
 if __name__ != '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')
@@ -39,16 +38,6 @@ def logoutgoogle():
 
 #----------------------------------------------------------------------
 
-# For local development only. MoveNet is accessed via a picked object for production.
-def load_model():
-    global model
-    try:
-        model = hub.load("https://tfhub.dev/google/movenet/multipose/lightning/1")
-        model = model.signatures['serving_default'] # default model
-        return("model loaded successfully")
-    except Exception as e:
-        app.logger.info(str(e))
-        return e
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
@@ -57,16 +46,8 @@ def index():
     username = auth.authenticate()
     given = flask.session.get('given_name')
 
-    if model is None:
-        app.logger.info("about to attempt model load")
-        load_status = load_model()
-    else:
-        load_status = "model already loaded"
-
-
     html_code = flask.render_template('index.html', username=username,
-                                    given=given,
-                                    load_status = load_status)
+                                    given=given)
     response = flask.make_response(html_code)
 
     return response
@@ -77,11 +58,12 @@ def upload_video():
     print("Received video upload request")
     tackle_vid = flask.request.files['video_file']
 
-    # The ID of Google Cloud Storage bucket
+    # ID of Google Cloud Storage bucket
     bucket_name = "tackle-videos"
 
-    # The desired name of the uploaded GCS object (blob)
-    destination_blob_name = "test_upload_video" #replace this with int key using sql query to all the videos?
+    # Name of the uploaded GCS object
+    # TODO: replace this with int key using sql query to all the videos?
+    destination_blob_name = "test_upload_video"
 
     # Construct a client-side representation of the blob.
     storage_client = storage.Client()
@@ -118,7 +100,7 @@ def get_scores():
 
      # Calculate the tackle score
      # THIS LINE CAUSES SERVER ERROR
-    scores, length = formula.score(model, video_fn, timestamp)
+    scores, length = formula.score(video_fn, timestamp)
 
 
     rating = {0:"poor", 1:"fair", 2:"good", 3:"excellent"}

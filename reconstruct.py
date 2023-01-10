@@ -41,9 +41,9 @@ def reconstruct(video_filepath):
 
     ''' for debugging
     print("\n")
-    print("----------------------------------------------")
+    print("------------------------------------------------------")
     print("Initializing VertexAI client")
-    print("----------------------------------------------")
+    print("------------------------------------------------------")
     '''
 
     # Initialize VertexAI client
@@ -51,13 +51,13 @@ def reconstruct(video_filepath):
     endpoint = f"projects/{project}/locations/{location}/endpoints/{endpoint_id}"
 
     print("\n")
-    print("----------------------------------------------")
+    print("------------------------------------------------------")
     print(f"Analyzing video file from {video_filepath} ...")
-    print("----------------------------------------------")
+    print("------------------------------------------------------")
 
     keypoints_timeseries = []
     cap = cv2.VideoCapture(video_filepath)
-    fps = cap.get(cv2.CAP_PROP_FPS)
+    fps = round(cap.get(cv2.CAP_PROP_FPS), 2)
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -65,9 +65,9 @@ def reconstruct(video_filepath):
         # All video frames have been read
         if frame is None:
             print("\n")
-            print("----------------------------------------------")
-            print("All video frames analyzed")
-            print("----------------------------------------------")
+            print("------------------------------------------------------")
+            print("Pose estimation of video completed")
+            print("------------------------------------------------------")
             break
 
         # Resize frame dims to multiple of 32 and longer side 256
@@ -84,9 +84,9 @@ def reconstruct(video_filepath):
 
         ''' for debugging
         print("\n")
-        print("----------------------------------------------")
+        print("------------------------------------------------------")
         print("Connecting to VertexAI to get prediction")
-        print("----------------------------------------------")
+        print("------------------------------------------------------")
         '''
 
         # Get prediction
@@ -95,9 +95,9 @@ def reconstruct(video_filepath):
 
         ''' for debugging
         print("\n")
-        print("----------------------------------------------")
+        print("------------------------------------------------------")
         print("Prediction received")
-        print("----------------------------------------------")
+        print("------------------------------------------------------")
         '''
 
         # Extract first person, truncate bounding box info, and reshape
@@ -113,11 +113,14 @@ def reconstruct(video_filepath):
 if __name__ == "__main__" :
 
     t0 = time.time()
+
     keypoints, fps = reconstruct('test.mp4')
 
+    total_time = round(time.time() - t0, 2)
+
     print("\n")
-    print("----------------------------------------------")
+    print("------------------------------------------------------")
     print("Shape of keypoints:", keypoints.shape) # (frames, 17, 3)
     print("Frame rate:", fps)
-    print(time.time() - t0, "seconds elapsed")
-    print("----------------------------------------------")
+    print("Pose estimation took", total_time, "seconds")
+    print("------------------------------------------------------")
