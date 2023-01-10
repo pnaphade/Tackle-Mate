@@ -3,6 +3,7 @@
 *.mp4
 *.json
 *__pycache__*
+movenet_multipose_lightning_1/*
 videos/*
 archive/*
 env.txt
