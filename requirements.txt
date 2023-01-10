@@ -9,5 +9,4 @@ http.client
 oauth2client
 google-cloud-storage
 google-cloud-aiplatform
-protobuf==3.20.*
 typing
