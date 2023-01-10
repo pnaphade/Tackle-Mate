@@ -5,8 +5,10 @@ numpy
 tensorflow
 tensorflow-hub
 opencv-python
-cryptography
 google-api-python-client
 http.client
 oauth2client
 google-cloud-storage
+google-cloud-aiplatform
+protobuf
+typing
